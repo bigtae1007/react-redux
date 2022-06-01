@@ -1,12 +1,17 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { __changeComplete } from "../../redux/modules/todo";
+import { __changeComplete, __deleteTodo } from "../../redux/modules/todo";
 
 export default function TodoCard({ complete, text, id, index }) {
   const dispatch = useDispatch();
+  // 완료 상태 변경하기
   const changeComplete = () => {
     dispatch(__changeComplete({ id, index, complete }));
+  };
+  // 삭제하기
+  const deleteTodo = () => {
+    dispatch(__deleteTodo({ id, index }));
   };
   return (
     <TextDiv complete={complete}>
@@ -19,7 +24,7 @@ export default function TodoCard({ complete, text, id, index }) {
       >
         {complete ? "취소" : "완료"}
       </Btn>
-      <Btn>삭 제</Btn>
+      <Btn onClick={deleteTodo}>삭 제</Btn>
     </TextDiv>
   );
 }

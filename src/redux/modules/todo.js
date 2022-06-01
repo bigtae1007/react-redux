@@ -2,6 +2,7 @@ import { async } from "@firebase/util";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   updateDoc,
@@ -28,6 +29,9 @@ const successGetTodo = (payload) => {
 };
 const addTodo = (payload) => {
   return { type: ADD_TODO, payload };
+};
+const deleteTodo = (payload) => {
+  return { type: DELETE_TODO, payload };
 };
 const changeComplete = (payload) => {
   return { type: UPDATE_COMPLETE, payload };
@@ -62,6 +66,12 @@ export const __addTodo = (payload) => async (dispatch, getState) => {
   const todoData = await addDoc(collection(db, "todos"), payload);
   dispatch(addTodo({ id: todoData.id, ...payload }));
 };
+//todo 삭제하기
+export const __deleteTodo = (payload) => async (dispatch, getState) => {
+  const docRef = doc(db, "todos", payload.id);
+  await deleteDoc(docRef);
+  dispatch(deleteTodo(payload.index));
+};
 // 완료 상태 변경
 export const __changeComplete = (payload) => async (dispatch, getState) => {
   const docRef = doc(db, "todos", payload.id);
@@ -80,7 +90,7 @@ export default function buckets(state = initialState, action = {}) {
     case GET_TODO_SUCCESS:
       return { ...state, todo: action.payload };
     case ADD_TODO:
-      return { ...state, todo: [...state.todo, action.payload] };
+      return { ...state, todo: [action.payload, ...state.todo] };
     case UPDATE_COMPLETE:
       const newCompleteTodo = state.todo.map((v, l) => {
         if (l === action.payload) {
@@ -91,6 +101,12 @@ export default function buckets(state = initialState, action = {}) {
         }
       });
       return { ...state, todo: newCompleteTodo };
+    case DELETE_TODO:
+      const newDeleteTodo = state.todo.filter((v, l) => {
+        return l === action.payload ? false : true;
+      });
+      console.log(newDeleteTodo);
+      return { ...state, todo: newDeleteTodo };
     case GET_TODO_ERROR:
       return { ...state, error: action.payload };
     default:
