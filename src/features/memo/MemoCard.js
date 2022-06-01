@@ -43,6 +43,7 @@ const WrapCard = styled.div`
   ${flex({ gap: "0.5rem", direction: "column" })}
   border: 1px solid var(--green);
   border-radius: 0.5rem;
+  min-width: 300px;
   width: 30vw;
   padding: 0.6rem;
   position: relative;

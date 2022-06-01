@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { keyframes } from "styled-components";
 // 컴포넌트
@@ -8,7 +9,7 @@ import MemoCard from "./MemoCard";
 
 export default function MemoCardList(props) {
   const memoLists = useSelector((state) => state.memos.memo);
-  console.log(memoLists);
+  const navigate = useNavigate();
   return (
     <WrapCardList>
       {memoLists.map((v, l) => {
@@ -21,7 +22,13 @@ export default function MemoCardList(props) {
           />
         );
       })}
-      <AddBtn>+</AddBtn>
+      <AddBtn
+        onClick={() => {
+          navigate("add");
+        }}
+      >
+        +
+      </AddBtn>
     </WrapCardList>
   );
 }
@@ -37,7 +44,6 @@ from{
 const WrapCardList = styled.div`
   ${flex({ gap: "1.5rem", jutify: "space-around" })}
   flex-wrap: wrap;
-  border: 1px solid #000;
 `;
 const AddBtn = styled.button`
   position: absolute;

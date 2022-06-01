@@ -15,7 +15,140 @@ import { memo } from "react";
 
 // 초기 기본 값
 const initialState = {
-  memo: [],
+  memo: [
+    {
+      text: "안녕하세여",
+      explain: "인사입니다",
+      example: "환영합니다",
+      id: 6,
+      complete: false,
+    },
+    {
+      text: "안녕하세여",
+      explain: "인사입니다",
+      example: "환영합니다",
+      id: 7,
+      complete: false,
+    },
+    {
+      text: "안녕하세여",
+      explain: "인사입니다",
+      example: "환영합니다",
+      id: 5,
+      complete: false,
+    },
+    {
+      text: "안녕하세여",
+      explain: "인사입니다",
+      example: "환영합니다",
+      id: 1,
+      complete: false,
+    },
+    {
+      text: "안녕하세여",
+      explain: "인사입니다",
+      example: "환영합니다",
+      id: 3,
+      complete: false,
+    },
+    {
+      text: "안녕하세여",
+      explain: "인사입니다",
+      example: "환영합니다",
+      id: 2,
+      complete: false,
+    },
+  ],
   loading: false,
   error: null,
 };
+
+//action
+const ADD_MEMO = "memos/ADD_MEMO";
+const DELETE_MEMO = "memos/DELETE_MEMO";
+const UPDATE_MEMO = "memos/UPDATE_MEMO";
+const UPDATE_COMPLETE = "complete/UPDATE_CHECK";
+
+// server state
+const GET_MEMO_REQUEST = "memos/GET_MEMO_REQUEST";
+const GET_MEMO_SUCCESS = "memos/GET_MEMO_SUCCESS";
+const GET_MEMO_ERROR = "memos/GET_MEMO_ERROR";
+
+//action creator
+const addMemoCard = (payload) => {
+  return { type: ADD_MEMO, payload };
+};
+export const deleteMemoCard = (payload) => {
+  return { type: DELETE_MEMO, payload };
+};
+export const updateMemoCard = (payload) => {
+  return { type: UPDATE_MEMO, payload };
+};
+export const updateComplete = (payload) => {
+  return { type: UPDATE_COMPLETE, payload };
+};
+//
+const getMemoRequest = (payload) => {
+  return { type: GET_MEMO_REQUEST, payload };
+};
+const getMemoSuccess = (payload) => {
+  return { type: GET_MEMO_SUCCESS, payload };
+};
+const getMemoError = (payload) => {
+  return { type: GET_MEMO_ERROR, payload };
+};
+
+//thunk 미들웨어 함수
+export const __getMemos = () => {
+  return async function (dispatch) {
+    // 요청 시작과 함께 loading true로 변경
+    dispatch(getMemoRequest(true));
+    try {
+      // 성공시 데이터 store 저장 액션
+      const memo_data = await getDocs(collection(db, "memos"));
+      const memo_list = [];
+      memo_data.forEach((doc) => {
+        memo_list.push({ id: doc.id, ...doc.data() });
+      });
+      dispatch(getMemoSuccess(memo_list));
+    } catch (error) {
+      // 에러코드 저장 액션
+      dispatch(getMemoError(error));
+    } finally {
+      // 끝나고 load false로 변경
+      dispatch(getMemoRequest(false));
+    }
+  };
+};
+// 메모 추가하기
+export const __addMemo = (payload) => async (dispatch, getState) => {
+  dispatch(getMemoRequest(true));
+  try {
+    const add_memo_data = await addDoc(collection(db, "memos"), payload);
+    dispatch(addMemoCard({ id: add_memo_data.id, ...payload }));
+  } catch (error) {
+    // 에러코드 저장 액션
+    dispatch(getMemoError(error));
+  } finally {
+    // 끝나고 load false로 변경
+    dispatch(getMemoRequest(false));
+  }
+};
+
+//reducer
+export default function memos(state = initialState, action = {}) {
+  switch (action.type) {
+    case GET_MEMO_REQUEST:
+      return { ...state, loading: action.payload };
+
+    case GET_MEMO_SUCCESS:
+      return { ...state, memo: [...action.payload] };
+
+    case ADD_MEMO:
+      console.log(action.payload);
+      return { ...state, memo: [...state.memo, action.payload] };
+
+    default:
+      return state;
+  }
+}
