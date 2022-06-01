@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useRef } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import flex from "../../lib/flex";
+import { __addTodo } from "../../redux/modules/todo";
 
 export default function TodoAdd() {
+  const dispatch = useDispatch();
+  const todoText = useRef("");
+  const saveTodo = () => {
+    dispatch(__addTodo({ text: todoText.current.value, complete: false }));
+    todoText.current.value = "";
+  };
   return (
     <>
       <WrapDiv>
-        <AddTodoInput type="text" />
-        <AddBtn>추가 하기</AddBtn>
+        <AddTodoInput type="text" ref={todoText} />
+        <AddBtn onClick={saveTodo}>추가 하기</AddBtn>
       </WrapDiv>
     </>
   );
