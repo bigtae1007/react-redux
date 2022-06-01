@@ -21,6 +21,7 @@ export default function MemoCardList(props) {
             example={v.example}
             complete={v.complete}
             id={v.id}
+            index={l}
           />
         );
       })}

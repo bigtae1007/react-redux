@@ -101,13 +101,26 @@ export const __changeComplete = (payload) => async (dispatch, getState) => {
     } else {
       await updateDoc(docRef, { complete: true });
     }
-    console.log(getState().memos);
     const memo_index = getState().memos.memo.findIndex((v) => {
       return v.id === payload.id;
     });
     dispatch(updateComplete(memo_index));
 
     // 해당 데이터 인덱스 값 전달
+  } catch (error) {
+    dispatch(getMemoError(error));
+  } finally {
+    dispatch(getMemoRequest(false));
+  }
+};
+// 메모 내용 수정하기
+export const __changeMemo = (payload) => async (dispatch, getState) => {
+  dispatch(getMemoRequest(true));
+  try {
+    const docRef = doc(db, "memos", payload.id);
+    // db값 변경
+    await updateDoc(docRef, payload.memo);
+    dispatch(updateMemoCard({ index: payload.index, data: payload.memo }));
   } catch (error) {
     dispatch(getMemoError(error));
   } finally {
@@ -141,11 +154,9 @@ export default function memos(state = initialState, action = {}) {
       return { ...state, memo: [...action.payload] };
 
     case ADD_MEMO:
-      console.log(action.payload);
-      return { ...state, memo: [...state.memo, action.payload] };
+      return { ...state, memo: [action.payload, ...state.memo] };
 
     case UPDATE_COMPLETE:
-      console.log(action, state.memo);
       const changeComplete = state.memo.map((v, l) => {
         if (l === action.payload) {
           v.complete ? (v.complete = false) : (v.complete = true);
@@ -160,7 +171,18 @@ export default function memos(state = initialState, action = {}) {
         return l === action.payload ? false : true;
       });
       return { ...state, memo: deleteMemo };
-
+    case UPDATE_MEMO:
+      const changeMemo = state.memo.map((v, l) => {
+        if (l === Number(action.payload.index)) {
+          v.text = action.payload.data.text;
+          v.explain = action.payload.data.explain;
+          v.example = action.payload.data.example;
+          return v;
+        } else {
+          return v;
+        }
+      });
+      return { ...state, memo: changeMemo };
     default:
       return state;
   }

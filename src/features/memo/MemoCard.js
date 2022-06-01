@@ -1,11 +1,20 @@
 import React from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 // 컴포넌트
 import flex from "../../lib/flex";
 import { __changeComplete, __deleteMemo } from "../../redux/modules/memos";
-export default function MemoCard({ text, explain, example, id, complete }) {
+export default function MemoCard({
+  text,
+  explain,
+  example,
+  id,
+  complete,
+  index,
+}) {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   // 완료 상태 변경 이벤트
   const chgComplete = (id, complete) => {
@@ -29,7 +38,7 @@ export default function MemoCard({ text, explain, example, id, complete }) {
         </Btn>
         <Btn
           onClick={() => {
-            // chgMemo(indexId);
+            navigate(`change/${index}`);
           }}
         >
           &#8634;

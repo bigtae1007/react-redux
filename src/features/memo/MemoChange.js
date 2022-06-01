@@ -1,28 +1,34 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import flex from "../../lib/flex";
-import { __addMemo } from "../../redux/modules/memos";
+import { __changeMemo } from "../../redux/modules/memos";
 
-export default function MemoAdd() {
+export default function MemoChange() {
+  const { index } = useParams();
+  const memoData = useSelector((state) => state.memos?.memo[index]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const text = useRef();
   const explain = useRef();
   const example = useRef();
-  function addMemo(event) {
+  function changeMemo(event) {
     if (
       text.current.value !== "" &&
       explain.current.value !== "" &&
       example.current.value !== ""
     ) {
       dispatch(
-        __addMemo({
-          text: text.current.value,
-          explain: explain.current.value,
-          example: example.current.value,
-          complete: false,
+        __changeMemo({
+          memo: {
+            text: text.current.value,
+            explain: explain.current.value,
+            example: example.current.value,
+          },
+          index: index,
+          id: memoData.id,
         })
       );
       navigate(-1);
@@ -30,12 +36,16 @@ export default function MemoAdd() {
       alert("모든 칸을 입력해 주세요");
     }
   }
-
+  useEffect(() => {
+    text.current.value = memoData?.text;
+    explain.current.value = memoData?.explain;
+    example.current.value = memoData?.example;
+  }, [memoData]);
   return (
     <>
       <WarpMemoAdd>
         <WrapForm>
-          <h1>단어 추가하기</h1>
+          <h1>단어 수정하기</h1>
           <br></br>
           <label htmlFor="a">단어</label>
           <FormInput type="text" ref={text} />
@@ -45,7 +55,7 @@ export default function MemoAdd() {
           <FormInput type="text" ref={example} />
           <SubmitBtn
             onClick={(e) => {
-              addMemo(e);
+              changeMemo(e);
             }}
           >
             저장하기
