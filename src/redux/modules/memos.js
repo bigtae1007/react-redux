@@ -15,50 +15,7 @@ import { memo } from "react";
 
 // 초기 기본 값
 const initialState = {
-  memo: [
-    {
-      text: "안녕하세여",
-      explain: "인사입니다",
-      example: "환영합니다",
-      id: 6,
-      complete: false,
-    },
-    {
-      text: "안녕하세여",
-      explain: "인사입니다",
-      example: "환영합니다",
-      id: 7,
-      complete: false,
-    },
-    {
-      text: "안녕하세여",
-      explain: "인사입니다",
-      example: "환영합니다",
-      id: 5,
-      complete: false,
-    },
-    {
-      text: "안녕하세여",
-      explain: "인사입니다",
-      example: "환영합니다",
-      id: 1,
-      complete: false,
-    },
-    {
-      text: "안녕하세여",
-      explain: "인사입니다",
-      example: "환영합니다",
-      id: 3,
-      complete: false,
-    },
-    {
-      text: "안녕하세여",
-      explain: "인사입니다",
-      example: "환영합니다",
-      id: 2,
-      complete: false,
-    },
-  ],
+  memo: [],
   loading: false,
   error: null,
 };
@@ -134,7 +91,32 @@ export const __addMemo = (payload) => async (dispatch, getState) => {
     dispatch(getMemoRequest(false));
   }
 };
+// 메모 complete 변경
+export const __changeComplete = (payload) => async (dispatch, getState) => {
+  dispatch(getMemoRequest(true));
+  try {
+    const docRef = doc(db, "memos", payload.id);
+    // db값 변경
+    if (payload.complete) {
+      await updateDoc(docRef, { complete: false });
+    } else {
+      await updateDoc(docRef, { complete: true });
+    }
+    console.log(getState().memos);
+    const memo_index = getState().memos.memo.findIndex((v) => {
+      return v.id === payload.id;
+    });
+    dispatch(updateComplete(memo_index));
 
+    // 해당 데이터 인덱스 값 전달
+  } catch (error) {
+    // 에러코드 저장 액션
+    dispatch(getMemoError(error));
+  } finally {
+    // 끝나고 load false로 변경
+    dispatch(getMemoRequest(false));
+  }
+};
 //reducer
 export default function memos(state = initialState, action = {}) {
   switch (action.type) {
@@ -148,6 +130,17 @@ export default function memos(state = initialState, action = {}) {
       console.log(action.payload);
       return { ...state, memo: [...state.memo, action.payload] };
 
+    case UPDATE_COMPLETE:
+      console.log(action, state.memo);
+      const changeComplete = state.memo.map((v, l) => {
+        if (l === action.payload) {
+          v.complete ? (v.complete = false) : (v.complete = true);
+          return v;
+        } else {
+          return v;
+        }
+      });
+      return { ...state, memo: changeComplete };
     default:
       return state;
   }

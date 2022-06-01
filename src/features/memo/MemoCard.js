@@ -1,15 +1,23 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
 // 컴포넌트
 import flex from "../../lib/flex";
-export default function MemoCard({ text, explain, example }) {
+import { __changeComplete } from "../../redux/modules/memos";
+export default function MemoCard({ text, explain, example, id, complete }) {
+  const dispatch = useDispatch();
+  const chgComplete = (id, index) => {
+    console.log("a");
+    dispatch(__changeComplete({ id, complete }));
+  };
+
   return (
-    <WrapCard>
+    <WrapCard complete={complete}>
       <BtnDiv>
         <Btn
           onClick={() => {
-            // chgCheck(indexId, checkState);
+            chgComplete(id, complete);
           }}
         >
           &#10003;
@@ -47,6 +55,9 @@ const WrapCard = styled.div`
   width: 30vw;
   padding: 0.6rem;
   position: relative;
+  background-color: ${({ complete }) => {
+    return complete ? "var(--grey)" : "var(--white)";
+  }};
 `;
 const BtnDiv = styled.div`
   ${flex({ gap: "0.2rem" })}
