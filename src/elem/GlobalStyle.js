@@ -10,7 +10,12 @@ const GlobalStyle = createGlobalStyle`
 a{
   text-decoration: none;
 }
-
+body {
+  margin-top: 100px;
+}
+button {
+  cursor: pointer;
+}
 :root{
     --black : #333333;
     --white: #ffffff;
