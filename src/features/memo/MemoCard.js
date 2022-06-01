@@ -4,12 +4,17 @@ import styled from "styled-components";
 
 // 컴포넌트
 import flex from "../../lib/flex";
-import { __changeComplete } from "../../redux/modules/memos";
+import { __changeComplete, __deleteMemo } from "../../redux/modules/memos";
 export default function MemoCard({ text, explain, example, id, complete }) {
   const dispatch = useDispatch();
-  const chgComplete = (id, index) => {
-    console.log("a");
+  // 완료 상태 변경 이벤트
+  const chgComplete = (id, complete) => {
     dispatch(__changeComplete({ id, complete }));
+  };
+  // 메모 삭제 이벤트
+  const deleteMemo = (id) => {
+    dispatch(__deleteMemo(id));
+    alert("삭제되었습니다 !");
   };
 
   return (
@@ -31,7 +36,7 @@ export default function MemoCard({ text, explain, example, id, complete }) {
         </Btn>
         <Btn
           onClick={() => {
-            // delMemo(indexId);
+            deleteMemo(id);
           }}
         >
           &#10008;

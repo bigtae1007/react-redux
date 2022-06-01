@@ -56,6 +56,7 @@ const getMemoError = (payload) => {
 };
 
 //thunk 미들웨어 함수
+//데이터 받아오기
 export const __getMemos = () => {
   return async function (dispatch) {
     // 요청 시작과 함께 loading true로 변경
@@ -84,10 +85,8 @@ export const __addMemo = (payload) => async (dispatch, getState) => {
     const add_memo_data = await addDoc(collection(db, "memos"), payload);
     dispatch(addMemoCard({ id: add_memo_data.id, ...payload }));
   } catch (error) {
-    // 에러코드 저장 액션
     dispatch(getMemoError(error));
   } finally {
-    // 끝나고 load false로 변경
     dispatch(getMemoRequest(false));
   }
 };
@@ -110,13 +109,28 @@ export const __changeComplete = (payload) => async (dispatch, getState) => {
 
     // 해당 데이터 인덱스 값 전달
   } catch (error) {
-    // 에러코드 저장 액션
     dispatch(getMemoError(error));
   } finally {
-    // 끝나고 load false로 변경
     dispatch(getMemoRequest(false));
   }
 };
+// 메모카드 삭제하기
+export const __deleteMemo = (payload) => async (dispatch, getState) => {
+  dispatch(getMemoRequest(true));
+  try {
+    const docRef = doc(db, "memos", payload);
+    await deleteDoc(docRef);
+    const memo_index = getState().memos.memo.findIndex((v) => {
+      return v.id === payload;
+    });
+    dispatch(deleteMemoCard(memo_index));
+  } catch (error) {
+    dispatch(getMemoError(error));
+  } finally {
+    dispatch(getMemoRequest(false));
+  }
+};
+
 //reducer
 export default function memos(state = initialState, action = {}) {
   switch (action.type) {
@@ -141,6 +155,12 @@ export default function memos(state = initialState, action = {}) {
         }
       });
       return { ...state, memo: changeComplete };
+    case DELETE_MEMO:
+      const deleteMemo = state.memo.filter((v, l) => {
+        return l === action.payload ? false : true;
+      });
+      return { ...state, memo: deleteMemo };
+
     default:
       return state;
   }
