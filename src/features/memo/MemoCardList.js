@@ -22,6 +22,7 @@ export default function MemoCardList(props) {
             complete={v.complete}
             id={v.id}
             index={l}
+            password={v.password}
           />
         );
       })}
@@ -40,7 +41,7 @@ to{
   transform: rotate(0deg);
 }
 from{
-  transform: rotate(90deg);
+  transform: rotate(360deg);
 }
 `;
 
@@ -51,16 +52,16 @@ const WrapCardList = styled.div`
 const AddBtn = styled.button`
   position: absolute;
   border: none;
-  bottom: 20px;
-  right: 20px;
+  bottom: 50px;
+  right: 50px;
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;
   font-size: 4rem;
-  line-height: 4rem;
+  line-height: 1px;
   color: var(--white);
   background-color: var(--green);
   :hover {
-    animation: ${spinAnimation} 1s infinite linear;
+    animation: ${spinAnimation} 3s infinite linear;
   }
 `;

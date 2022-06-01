@@ -11,17 +11,20 @@ export default function MemoAdd() {
   const text = useRef();
   const explain = useRef();
   const example = useRef();
+  const password = useRef();
   function addMemo(event) {
     if (
       text.current.value !== "" &&
       explain.current.value !== "" &&
-      example.current.value !== ""
+      example.current.value !== "" &&
+      password.current.value !== ""
     ) {
       dispatch(
         __addMemo({
           text: text.current.value,
           explain: explain.current.value,
           example: example.current.value,
+          password: password.current.value,
           complete: false,
         })
       );
@@ -43,6 +46,10 @@ export default function MemoAdd() {
           <FormInput type="text" ref={explain} />
           <label htmlFor="c">예시</label>
           <FormInput type="text" ref={example} />
+          <label style={{ color: "var(--red)" }} htmlFor="c">
+            비밀번호
+          </label>
+          <FormInput type="text" ref={password} />
           <SubmitBtn
             onClick={(e) => {
               addMemo(e);

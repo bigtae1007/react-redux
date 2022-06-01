@@ -10,7 +10,6 @@ export default function MemoChange() {
   const memoData = useSelector((state) => state.memos?.memo[index]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const text = useRef();
   const explain = useRef();
   const example = useRef();

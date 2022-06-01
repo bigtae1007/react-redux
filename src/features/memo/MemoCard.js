@@ -13,17 +13,28 @@ export default function MemoCard({
   id,
   complete,
   index,
+  password,
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // 완료 상태 변경 이벤트
   const chgComplete = (id, complete) => {
-    dispatch(__changeComplete({ id, complete }));
+    const myPassword = prompt("비밀번호를 입력하세요");
+    if (myPassword === password) {
+      dispatch(__changeComplete({ id, complete }));
+    } else {
+      alert("비밀번호가 일치 하지 않습니다. ");
+    }
   };
   // 메모 삭제 이벤트
   const deleteMemo = (id) => {
-    dispatch(__deleteMemo(id));
-    alert("삭제되었습니다 !");
+    const myPassword = prompt("비밀번호를 입력하세요");
+    if (myPassword === password) {
+      dispatch(__deleteMemo(id));
+      alert("삭제되었습니다 !");
+    } else {
+      alert("비밀번호가 일치 하지 않습니다. ");
+    }
   };
 
   return (
@@ -38,7 +49,12 @@ export default function MemoCard({
         </Btn>
         <Btn
           onClick={() => {
-            navigate(`change/${index}`);
+            const myPassword = prompt("비밀번호를 입력하세요");
+            if (myPassword === password) {
+              navigate(`change/${index}`);
+            } else {
+              alert("비밀번호가 일치 하지 않습니다. ");
+            }
           }}
         >
           &#8634;
