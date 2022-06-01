@@ -29,6 +29,9 @@ const successGetTodo = (payload) => {
 const addTodo = (payload) => {
   return { type: ADD_TODO, payload };
 };
+const changeComplete = (payload) => {
+  return { type: UPDATE_COMPLETE, payload };
+};
 
 //action server
 const requestGetTodo = (payload) => {
@@ -38,7 +41,7 @@ const errorGetTodo = (payload) => {
   return { type: GET_TODO_ERROR, payload };
 };
 // 미들웨어 함수
-
+// 데이터 가져오기
 export const __getRequest = () => async (dispatch, getState) => {
   dispatch(requestGetTodo(true));
   try {
@@ -54,18 +57,20 @@ export const __getRequest = () => async (dispatch, getState) => {
     dispatch(requestGetTodo(false));
   }
 };
+// todo 추가하기
 export const __addTodo = (payload) => async (dispatch, getState) => {
   const todoData = await addDoc(collection(db, "todos"), payload);
   dispatch(addTodo({ id: todoData.id, ...payload }));
 };
-
+// 완료 상태 변경
 export const __changeComplete = (payload) => async (dispatch, getState) => {
   const docRef = doc(db, "todos", payload.id);
   if (payload.complete) {
-    await updateDoc(docRef, { complete: true });
-  } else {
     await updateDoc(docRef, { complete: false });
+  } else {
+    await updateDoc(docRef, { complete: true });
   }
+  dispatch(changeComplete(payload.index));
 };
 
 export default function buckets(state = initialState, action = {}) {
@@ -75,9 +80,17 @@ export default function buckets(state = initialState, action = {}) {
     case GET_TODO_SUCCESS:
       return { ...state, todo: action.payload };
     case ADD_TODO:
-      console.log("a");
-      console.log(action.payload);
       return { ...state, todo: [...state.todo, action.payload] };
+    case UPDATE_COMPLETE:
+      const newCompleteTodo = state.todo.map((v, l) => {
+        if (l === action.payload) {
+          v.complete ? (v.complete = false) : (v.complete = true);
+          return v;
+        } else {
+          return v;
+        }
+      });
+      return { ...state, todo: newCompleteTodo };
     case GET_TODO_ERROR:
       return { ...state, error: action.payload };
     default:

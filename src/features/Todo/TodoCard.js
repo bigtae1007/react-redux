@@ -1,22 +1,32 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import { __changeComplete } from "../../redux/modules/todo";
 
-export default function TodoCard() {
+export default function TodoCard({ complete, text, id, index }) {
+  const dispatch = useDispatch();
+  const changeComplete = () => {
+    dispatch(__changeComplete({ id, index, complete }));
+  };
   return (
-    <TextDiv>
-      <Text>
-        이건 투두 이건 투두 이건 투두 이건 투두 이건 투두 이건 투두 이건 투두
-        이건 투두 내요이 되겠죠?
-      </Text>
-      <Btn color="blue" text="white">
-        완 료
+    <TextDiv complete={complete}>
+      <Text>{text}</Text>
+      <Btn
+        color="blue"
+        text="white"
+        complete={complete}
+        onClick={changeComplete}
+      >
+        {complete ? "취소" : "완료"}
       </Btn>
       <Btn>삭 제</Btn>
     </TextDiv>
   );
 }
 const TextDiv = styled.div`
-  background-color: var(--grey);
+  background-color: ${({ complete }) => {
+    return complete ? "var(--grey)" : "var(--white)";
+  }};
   margin: 10px 40px;
   border-radius: 20px;
   border-bottom: 1px solid var(--black);
@@ -37,6 +47,7 @@ const Btn = styled.button`
   width: 40px;
   height: 30px;
   border-radius: 10px;
-  color: ${({ text }) => (text ? "#fff" : "var(--blue)")};
+  color: ${({ text, complete }) =>
+    text ? (complete ? "var(--red)" : "var(--white)") : "var(--blue)"};
   background-color: ${({ color }) => (color ? "var(--blue)" : "var(--while)")};
 `;
