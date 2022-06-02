@@ -1,12 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 import flex from "../lib/flex";
-
+import { Outlet } from "react-router-dom";
 export default function Header({ name = "", color = "var(--green)" }) {
   return (
-    <WarpHeader color={color}>
-      <h2>{name}</h2>
-    </WarpHeader>
+    <>
+      <WarpHeader color={color}>
+        <h2>{name}</h2>
+      </WarpHeader>
+      <Outlet />
+    </>
   );
 }
 const WarpHeader = styled.div`

@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import Header from "../../components/Header";
+import { __getRequest } from "../../redux/modules/todo";
 import TodoAdd from "./TodoAdd";
 import TodoList from "./TodoList";
 
 export default function TodoHome() {
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state);
+  useEffect(() => {
+    dispatch(__getRequest());
+  }, []);
   return (
     <>
       <Header name={"TODO _ LIST"} color={"var(--blue)"} />

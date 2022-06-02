@@ -6,7 +6,6 @@ import TodoCard from "./TodoCard";
 
 export default function TodoList() {
   const { todo, loading, error } = useSelector((state) => state.todos);
-  console.log(todo);
   return (
     <>
       <WrapList>

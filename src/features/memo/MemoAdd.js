@@ -71,7 +71,7 @@ const WarpMemoAdd = styled.div`
   margin: 0 auto;
 `;
 const WrapForm = styled.div`
-  margin: 200px 0;
+  margin: 150px 0;
   padding: 80px 20px;
   border-radius: 1rem;
   box-shadow: 2px 2px var(--grey);
